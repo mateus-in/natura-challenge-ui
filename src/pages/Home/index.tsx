@@ -1,111 +1,111 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
-import { api } from "../../libs/api";
+import { api } from '../../libs/api'
 
 interface Department {
-  id: string;
-  name: string;
-  description: string;
+  id: string
+  name: string
+  description: string
 }
 
 interface Category {
-  id: string;
-  name: string;
-  description: string;
-  department: Department;
+  id: string
+  name: string
+  description: string
+  department: Department
 }
 
 interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  stockQuantity: number;
+  id: string
+  name: string
+  description: string
+  price: number
+  stockQuantity: number
 }
 
 interface Pagination {
-  count: number;
-  limit: number;
-  currentPage: number;
-  pagesCount: number;
+  count: number
+  limit: number
+  currentPage: number
+  pagesCount: number
 }
 
 interface ProductsResponse {
-  products: Product[];
-  pagination: Pagination;
+  products: Product[]
+  pagination: Pagination
 }
 
 const fetchDepartments = async (): Promise<Department[]> => {
-  const { data } = await api.get("/departments", {
+  const { data } = await api.get('/departments', {
     params: {
       skip: 0,
       take: 100,
     },
-  });
+  })
 
-  return data.departments;
-};
+  return data.departments
+}
 
 const fetchCategories = async (): Promise<Category[]> => {
-  const { data } = await api.get("/categories", {
+  const { data } = await api.get('/categories', {
     params: {
       skip: 0,
       take: 200,
     },
-  });
+  })
 
-  return data.categories;
-};
+  return data.categories
+}
 
 const fetchProducts = async (
   skip: number,
   take: number,
   departmentId?: string,
-  categoryId?: string
+  categoryId?: string,
 ): Promise<ProductsResponse> => {
-  const { data } = await api.get("/products", {
+  const { data } = await api.get('/products', {
     params: {
       skip,
       take,
       departmentId,
       categoryId,
     },
-  });
+  })
 
-  return data;
-};
+  return data
+}
 
 export function Home() {
-  const itemsPerPage = 15;
+  const itemsPerPage = 15
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1)
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<
     string | undefined
-  >(undefined);
+  >(undefined)
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string | undefined
-  >(undefined);
+  >(undefined)
 
-  const skip = (page - 1) * itemsPerPage;
+  const skip = (page - 1) * itemsPerPage
 
   const {
     data: departments = [],
     isLoading: isLoadingDepartments,
     error: errorDepartments,
   } = useQuery<Department[]>({
-    queryKey: ["departments"],
+    queryKey: ['departments'],
     queryFn: fetchDepartments,
-  });
+  })
 
   const {
     data: categories = [],
     isLoading: isLoadingCategories,
     error: errorCategories,
   } = useQuery<Category[]>({
-    queryKey: ["categories"],
+    queryKey: ['categories'],
     queryFn: fetchCategories,
-  });
+  })
 
   const {
     data,
@@ -113,7 +113,7 @@ export function Home() {
     error: errorProducts,
   } = useQuery<ProductsResponse>({
     queryKey: [
-      "products",
+      'products',
       skip,
       itemsPerPage,
       selectedDepartmentId,
@@ -124,54 +124,54 @@ export function Home() {
         skip,
         itemsPerPage,
         selectedDepartmentId,
-        selectedCategoryId
+        selectedCategoryId,
       ),
-  });
+  })
 
-  const products = data?.products || [];
-  const pagination = data?.pagination;
+  const products = data?.products || []
+  const pagination = data?.pagination
 
-  const totalPages = pagination ? pagination.pagesCount : 1;
+  const totalPages = pagination ? pagination.pagesCount : 1
 
   function addToCart(product: Product) {
-    console.log(product);
+    console.log(product)
   }
 
   function handleNextPage() {
     if (pagination && page < totalPages) {
-      setPage((prev) => prev + 1);
+      setPage((prev) => prev + 1)
     }
   }
 
   function handlePreviousPage() {
-    setPage((prev) => Math.max(prev - 1, 1));
+    setPage((prev) => Math.max(prev - 1, 1))
   }
 
   function handleSelectDepartment(departmentId: string) {
     if (selectedDepartmentId === departmentId) {
-      setSelectedDepartmentId(undefined);
+      setSelectedDepartmentId(undefined)
     } else {
-      setSelectedDepartmentId(departmentId);
-      setSelectedCategoryId(undefined);
+      setSelectedDepartmentId(departmentId)
+      setSelectedCategoryId(undefined)
     }
-    setPage(1);
+    setPage(1)
   }
 
   function handleSelectCategory(categoryId: string) {
     if (selectedCategoryId === categoryId) {
-      setSelectedCategoryId(undefined);
+      setSelectedCategoryId(undefined)
     } else {
-      setSelectedCategoryId(categoryId);
-      setSelectedDepartmentId(undefined);
+      setSelectedCategoryId(categoryId)
+      setSelectedDepartmentId(undefined)
     }
-    setPage(1);
+    setPage(1)
   }
 
   if (isLoadingProducts || isLoadingCategories || isLoadingDepartments)
-    return <span>Carregando...</span>;
+    return <span>Carregando...</span>
 
   if (errorProducts || errorCategories || errorDepartments)
-    return <span>Erro ao carregar dados.</span>;
+    return <span>Erro ao carregar dados.</span>
 
   return (
     <div className="flex flex-col md:flex-row p-4 gap-4">
@@ -182,7 +182,9 @@ export function Home() {
             <li
               key={department.id}
               className={`mb-2 cursor-pointer ${
-                selectedDepartmentId === department.id ? 'font-bold text-blue-600' : ''
+                selectedDepartmentId === department.id
+                  ? 'font-bold text-blue-600'
+                  : ''
               }`}
               onClick={() => handleSelectDepartment(department.id)}
             >
@@ -197,7 +199,9 @@ export function Home() {
             <li
               key={category.id}
               className={`mb-2 cursor-pointer ${
-                selectedCategoryId === category.id ? 'font-bold text-blue-600' : ''
+                selectedCategoryId === category.id
+                  ? 'font-bold text-blue-600'
+                  : ''
               }`}
               onClick={() => handleSelectCategory(category.id)}
             >
@@ -254,5 +258,5 @@ export function Home() {
         </div>
       </main>
     </div>
-  );
+  )
 }
