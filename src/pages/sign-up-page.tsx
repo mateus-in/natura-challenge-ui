@@ -1,25 +1,35 @@
-import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { z } from 'zod'
+
+const signUpSchema = z.object({
+  name: z.string(),
+  email: z.string().email('Email inválido'),
+  password: z.string(),
+})
+
+type SignUpFormProps = z.infer<typeof signUpSchema>
 
 export function SignUp() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormProps>({
+    resolver: zodResolver(signUpSchema),
+  })
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-
-    // Lógica de cadastro aqui
-    console.log('Nome:', name)
-    console.log('Email:', email)
-    console.log('Senha:', password)
+  const onSubmit = (data: SignUpFormProps) => {
+    console.log('Dados de cadastro:', data)
+    // Chamar a função de cadastro do contexto de autenticação
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-3xl font-bold mb-6">Criar Conta</h1>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-sm bg-white p-6 rounded shadow-md"
       >
         <div className="mb-4">
@@ -30,10 +40,11 @@ export function SignUp() {
             type="text"
             id="name"
             className="w-full p-2 border border-gray-300 rounded"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            {...register('name')}
           />
+          {errors.name && (
+            <p className="text-red-500 mt-1">{errors.name.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <label htmlFor="email" className="block text-gray-700 mb-2">
@@ -43,10 +54,11 @@ export function SignUp() {
             type="email"
             id="email"
             className="w-full p-2 border border-gray-300 rounded"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...register('email')}
           />
+          {errors.email && (
+            <p className="text-red-500 mt-1">{errors.email.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block text-gray-700 mb-2">
@@ -56,10 +68,11 @@ export function SignUp() {
             type="password"
             id="password"
             className="w-full p-2 border border-gray-300 rounded"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            {...register('password')}
           />
+          {errors.password && (
+            <p className="text-red-500 mt-1">{errors.password.message}</p>
+          )}
         </div>
         <button
           type="submit"
