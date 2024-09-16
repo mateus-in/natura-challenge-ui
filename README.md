@@ -32,15 +32,15 @@ src/
 
 ### 📄 Explicação dos Diretórios
 
-	•	**components/**: Contém componentes reutilizáveis e modulares utilizados em várias partes do aplicativo.
-	•	**contexts/**: Armazena contextos globais que gerenciam o estado compartilhado, como autenticação e gerenciamento do carrinho.
-	•	**helpers/**: Inclui funções utilitárias e auxiliares usadas em todo o projeto.
-	•	**hooks/**: Hooks personalizados para encapsular e reutilizar lógica de negócios complexa.
-	•	**interfaces/**: Definições de interfaces TypeScript que descrevem tipos e contratos do projeto.
-	•	**lib/**: Configurações e instâncias de bibliotecas externas (ex: configuração do Axios).
-	•	**pages/**: Páginas principais que representam as diferentes rotas do aplicativo.
-	•	**services/**: Serviços para chamadas à API e lógica de negócios relacionada a essas operações.
-	•	**styles/**: Contém estilos globais, como arquivos CSS ou configurações do TailwindCSS.
+- **components/**: Contém componentes reutilizáveis e modulares utilizados em várias partes do aplicativo.
+- **contexts/**: Armazena contextos globais que gerenciam o estado compartilhado, como autenticação e gerenciamento do carrinho.
+- **helpers/**: Inclui funções utilitárias e auxiliares usadas em todo o projeto.
+- **hooks/**: Hooks personalizados para encapsular e reutilizar lógica de negócios complexa.
+- **interfaces/**: Definições de interfaces TypeScript que descrevem tipos e contratos do projeto.
+- **lib/**: Configurações e instâncias de bibliotecas externas (ex: configuração do Axios).
+- **pages/**: Páginas principais que representam as diferentes rotas do aplicativo.
+- **services/**: Serviços para chamadas à API e lógica de negócios relacionada a essas operações.
+- **styles/**: Contém estilos globais, como arquivos CSS ou configurações do TailwindCSS.
 
 ## 📚 Casos de Uso
 
