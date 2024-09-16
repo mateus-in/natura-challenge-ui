@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export function Navbar() {
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-md">
@@ -27,9 +29,11 @@ export function Navbar() {
       </nav>
 
       <div>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-          Entrar
-        </button>
+        <Link to="/sign-in">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+            Entrar
+          </button>
+        </Link>
       </div>
     </header>
   )
