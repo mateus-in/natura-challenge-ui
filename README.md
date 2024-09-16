@@ -97,4 +97,4 @@ Para facilitar o teste da aplicação, você pode utilizar um dos usuários de t
 ### Usuário USER
 
 user1@naturachallenge.com.br
-naturachallengepass'
+naturachallengepass
