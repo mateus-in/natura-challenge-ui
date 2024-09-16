@@ -1,5 +1,5 @@
 import { useAppContext } from '../hooks'
-import { removeItemToCart, updateItemQuantity } from '../services'
+import { createOrder, removeItemToCart, updateItemQuantity } from '../services'
 
 export function Cart() {
   const { user, setUser } = useAppContext()
@@ -36,6 +36,14 @@ export function Cart() {
       ...user,
       cart,
     })
+  }
+
+  async function handleCheckout() {
+    if (!user) {
+      return
+    }
+
+    await createOrder(user.cart.id)
   }
 
   return (
@@ -111,7 +119,11 @@ export function Cart() {
             <span>${(parseFloat(calculateTotal()) + 5 + 8.32).toFixed(2)}</span>
           </div>
         </div>
-        <button className="mt-6 w-full bg-blue-600 text-white py-2 rounded hover:bg-purple-700 transition-colors">
+        <button
+          className="mt-6 w-full bg-blue-600 text-white py-2 rounded hover:bg-purple-700 transition-colors"
+          onClick={handleCheckout}
+          type="button"
+        >
           Confirmar
         </button>
       </aside>
