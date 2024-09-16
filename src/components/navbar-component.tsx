@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 export function Navbar() {
   return (
@@ -8,33 +8,45 @@ export function Navbar() {
       </span>
 
       <nav className="flex space-x-6">
-        <a
-          href="/"
-          className="text-gray-700 hover:text-blue-600 transition-colors"
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-600 font-bold'
+              : 'text-gray-700 hover:text-blue-600 transition-colors'
+          }
         >
           Home
-        </a>
-        <a
-          href="/orders"
-          className="text-gray-700 hover:text-blue-600 transition-colors"
+        </NavLink>
+
+        <NavLink
+          to="/orders"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-600 font-bold'
+              : 'text-gray-700 hover:text-blue-600 transition-colors'
+          }
         >
           Pedidos
-        </a>
-        <a
-          href="/cart"
-          className="text-gray-700 hover:text-blue-600 transition-colors"
+        </NavLink>
+
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-600 font-bold'
+              : 'text-gray-700 hover:text-blue-600 transition-colors'
+          }
         >
           Carrinho
-        </a>
+        </NavLink>
       </nav>
 
-      <div>
-        <Link to="/sign-in">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-            Entrar
-          </button>
-        </Link>
-      </div>
+      <NavLink to="/sign-in">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+          Login
+        </button>
+      </NavLink>
     </header>
   )
 }
