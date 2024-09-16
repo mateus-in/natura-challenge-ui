@@ -1,7 +1,10 @@
 import { Pagination } from '../components'
-import { useProductsPage } from '../hooks'
+import { useAppContext, useProductsPage } from '../hooks'
+import { Product } from '../interfaces'
 
 export function Home() {
+  const { setSignInIsVisible, user } = useAppContext()
+
   const {
     categories,
     currentPage,
@@ -17,6 +20,14 @@ export function Home() {
     products,
     productsFilter,
   } = useProductsPage()
+
+  function onAddToCart(product: Product) {
+    if (!user) {
+      setSignInIsVisible(true)
+    } else {
+      handleAddToCart(product)
+    }
+  }
 
   if (isLoading) {
     return <span>Carregando...</span>
@@ -78,7 +89,7 @@ export function Home() {
                   </div>
                   <button
                     className="mt-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                    onClick={() => handleAddToCart(product)}
+                    onClick={() => onAddToCart(product)}
                   >
                     Adicionar ao Carrinho
                   </button>

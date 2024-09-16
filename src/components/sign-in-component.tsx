@@ -1,10 +1,30 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import cookies from 'js-cookie'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { useAppContext } from '../hooks'
+import { getAuthenticatedUser, signIn } from '../services'
+
+const signInSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string(),
+})
+
+type SignInFormProps = z.infer<typeof signInSchema>
 
 export function SignIn() {
-  const { signInIsVisible, setSignInIsVisible, setSignUpIsVisible } =
+  const { signInIsVisible, setSignInIsVisible, setSignUpIsVisible, setUser } =
     useAppContext()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormProps>({
+    resolver: zodResolver(signInSchema),
+  })
 
   function handleCloseSignIn() {
     setSignInIsVisible(false)
@@ -13,6 +33,21 @@ export function SignIn() {
   function handleOpenSignUp() {
     setSignInIsVisible(false)
     setSignUpIsVisible(true)
+  }
+
+  async function onSignIn(data: SignInFormProps) {
+    const { token } = await signIn({
+      email: data.email,
+      password: data.password,
+    })
+
+    cookies.set('NaturaChallenge:Token', token)
+
+    const user = await getAuthenticatedUser(token)
+
+    setUser(user)
+
+    setSignInIsVisible(false)
   }
 
   return (
@@ -39,13 +74,23 @@ export function SignIn() {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action="#" method="POST" className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit(onSignIn)}>
                 <div>
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     E-mail
                   </label>
                   <div className="mt-2">
-                    <input className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <input
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      id="email"
+                      type="email"
+                      {...register('email')}
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 mt-1">
+                        {errors.email.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -54,7 +99,17 @@ export function SignIn() {
                     Senha
                   </label>
                   <div className="mt-2">
-                    <input className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <input
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      id="password"
+                      type="password"
+                      {...register('password')}
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 mt-1">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 

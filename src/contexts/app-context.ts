@@ -1,6 +1,10 @@
 import { createContext, Dispatch, SetStateAction } from 'react'
 
+import { User } from '../interfaces'
+
 interface AppContextProps {
+  user: User | null
+  setUser: Dispatch<SetStateAction<User | null>>
   signInIsVisible: boolean
   setSignInIsVisible: Dispatch<SetStateAction<boolean>>
   signUpIsVisible: boolean
