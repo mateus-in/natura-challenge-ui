@@ -1,4 +1,4 @@
-import { Home } from './pages/Home'
+import { Home } from './pages'
 
 export function App() {
   return <Home />
