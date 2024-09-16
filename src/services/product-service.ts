@@ -1,12 +1,21 @@
-import { ProductsResponse } from '../interfaces'
-import { api } from '../libs'
+import { Pagination, Product } from '../interfaces'
+import { api } from '../lib'
 
-export async function fetchProducts(
-  skip: number,
-  take: number,
-  departmentId?: string,
-  categoryId?: string,
-): Promise<ProductsResponse> {
+interface Params {
+  skip: number
+  take: number
+  departmentId?: string
+  categoryId?: string
+}
+
+interface Response {
+  products: Product[]
+  pagination: Pagination
+}
+
+export async function fetchProducts(params: Params): Promise<Response> {
+  const { skip, take, departmentId, categoryId } = params
+
   const { data } = await api.get('/products', {
     params: {
       skip,

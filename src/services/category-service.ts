@@ -1,5 +1,5 @@
 import { Category } from '../interfaces'
-import { api } from '../libs'
+import { api } from '../lib'
 
 export async function fetchCategories(): Promise<Category[]> {
   const { data } = await api.get('/categories', {

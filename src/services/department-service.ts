@@ -1,5 +1,5 @@
 import { Department } from '../interfaces'
-import { api } from '../libs'
+import { api } from '../lib'
 
 export async function fetchDepartments(): Promise<Department[]> {
   const { data } = await api.get('/departments', {

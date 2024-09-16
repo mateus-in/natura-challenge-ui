@@ -1,107 +1,100 @@
-import { useState } from 'react'
-
-import { ProductsFilter, ProductsList, ProductsPagination } from '../components'
-import { ProductsContext } from '../contexts'
-import { useCategories, useDepartments, useProducts } from '../hooks'
-import { Product } from '../interfaces'
+import { Pagination } from '../components'
+import { useProductsPage } from '../hooks'
 
 export function Home() {
-  const [page, setPage] = useState(1)
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState<
-    string | undefined
-  >(undefined)
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string | undefined
-  >(undefined)
-
-  const itemsPerPage = 15
-  const skip = (page - 1) * itemsPerPage
-
   const {
-    data: departments,
-    isLoading: isLoadingDepartments,
-    error: errorDepartments,
-  } = useDepartments()
+    categories,
+    currentPage,
+    departments,
+    error,
+    handleAddToCart,
+    handleNextPage,
+    handlePreviousPage,
+    isLoading,
+    pagesCount,
+    handleSelectCategory,
+    handleSelectDepartment,
+    products,
+    productsFilter,
+  } = useProductsPage()
 
-  const {
-    data: categories,
-    isLoading: isLoadingCategories,
-    error: errorCategories,
-  } = useCategories()
-
-  const {
-    data: productsResponse,
-    isLoading: isLoadingProducts,
-    error: errorProducts,
-  } = useProducts(skip, itemsPerPage, selectedDepartmentId, selectedCategoryId)
-
-  const isLoading =
-    isLoadingProducts || isLoadingCategories || isLoadingDepartments
-  const error =
-    errorProducts?.message ||
-    errorCategories?.message ||
-    errorDepartments?.message ||
-    null
-  const products = productsResponse?.products || []
-  const totalPages = productsResponse?.pagination.pagesCount || 1
-
-  const handleNextPage = () => {
-    if (productsResponse?.pagination && page < totalPages) {
-      setPage((prev) => prev + 1)
-    }
+  if (isLoading) {
+    return <span>Carregando...</span>
   }
 
-  const handlePreviousPage = () => {
-    setPage((prev) => Math.max(prev - 1, 1))
-  }
-
-  const handleDepartmentClick = (departmentId: string) => {
-    setSelectedDepartmentId(
-      selectedDepartmentId === departmentId ? undefined : departmentId,
-    )
-    setSelectedCategoryId(undefined)
-    setPage(1)
-  }
-
-  const handleCategoryClick = (categoryId: string) => {
-    setSelectedCategoryId(
-      selectedCategoryId === categoryId ? undefined : categoryId,
-    )
-    setSelectedDepartmentId(undefined)
-    setPage(1)
-  }
-
-  const addToCart = (product: Product) => {
-    console.log(`Produto adicionado ao carrinho: ${product.name}`)
+  if (error) {
+    return <span>Erro ao carregar os produtos</span>
   }
 
   return (
-    <ProductsContext.Provider
-      value={{
-        products,
-        categories: categories || [],
-        departments: departments || [],
-        selectedDepartmentId,
-        selectedCategoryId,
-        currentPage: page,
-        totalPages,
-        isLoading,
-        error,
-        handleDepartmentClick,
-        handleCategoryClick,
-        handleNextPage,
-        handlePreviousPage,
-        addToCart,
-      }}
-    >
-      <div className="flex flex-col md:flex-row p-4 gap-4">
-        <ProductsFilter />
-        <main className="flex-1 p-4 rounded">
-          <h1 className="text-3xl font-bold mb-4">Produtos</h1>
-          <ProductsList />
-          <ProductsPagination />
-        </main>
-      </div>
-    </ProductsContext.Provider>
+    <div className="flex flex-col md:flex-row gap-4">
+      {/* Filter */}
+      <aside className="w-full md:w-1/4 p-4 rounded">
+        <h2 className="text-xl font-bold mb-4">Departamentos</h2>
+        <ul>
+          {departments?.map((department) => (
+            <li
+              className={`mb-2 cursor-pointer ${productsFilter.departmentId === department.id ? 'font-bold text-blue-600' : ''}`}
+              key={department.id}
+              onClick={() => handleSelectDepartment(department)}
+            >
+              {department.name}
+            </li>
+          ))}
+        </ul>
+
+        <h2 className="text-xl font-bold mt-8 mb-4">Categorias</h2>
+        <ul>
+          {categories?.map((category) => (
+            <li
+              className={`mb-2 cursor-pointer ${productsFilter.categoryId === category.id ? 'font-bold text-blue-600' : ''}`}
+              key={category.id}
+              onClick={() => handleSelectCategory(category)}
+            >
+              {category.name}
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      <main className="flex-1 p-4 rounded">
+        <h1 className="text-3xl font-bold mb-4">Produtos</h1>
+
+        {/* List */}
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {products.length === 0
+            ? 'Nenhum produto encontrado'
+            : products.map((product) => (
+                <li
+                  className="border p-4 rounded shadow flex flex-col justify-between"
+                  key={product.id}
+                >
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+                    <p className="text-gray-700 mb-2">{product.description}</p>
+                    <p className="text-lg font-semibold text-green-600 mb-4">
+                      ${product.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <button
+                    className="mt-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Adicionar ao Carrinho
+                  </button>
+                </li>
+              ))}
+        </ul>
+
+        {products.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            handleNextPage={handleNextPage}
+            handlePreviousPage={handlePreviousPage}
+            pagesCount={pagesCount}
+          />
+        )}
+      </main>
+    </div>
   )
 }
