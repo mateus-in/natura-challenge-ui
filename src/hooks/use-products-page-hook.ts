@@ -1,8 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 
+import { useAppContext } from '../hooks'
 import { Category, Department, Pagination, Product } from '../interfaces'
-import { fetchCategories, fetchDepartments, fetchProducts } from '../services'
+import {
+  addItemToCart,
+  fetchCategories,
+  fetchDepartments,
+  fetchProducts,
+} from '../services'
 
 interface ProductsFilter {
   categoryId: string | undefined
@@ -15,6 +21,8 @@ export function useProductsPage() {
 
   const itemsPerPage = 15
   const skip = (currentPage - 1) * itemsPerPage
+
+  const { user, setUser } = useAppContext()
 
   const {
     data: departments,
@@ -97,8 +105,17 @@ export function useProductsPage() {
     setCurrentPage(1)
   }
 
-  const handleAddToCart = (product: Product) => {
-    console.log(product)
+  const handleAddToCart = async (product: Product) => {
+    if (!user) {
+      return
+    }
+
+    const cart = await addItemToCart(user.cart.id, product.id, 1)
+
+    setUser({
+      ...user,
+      cart,
+    })
   }
 
   return {
